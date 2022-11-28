@@ -58,10 +58,10 @@ app.use(express.urlencoded({ extended: false }));
 app.use('/signUp', require('./routes/signUpRoute'));
 app.use('/logIn', require('./routes/logInRoute'));
 app.use('/refresh', require('./routes/refreshTokenRoute'));
-app.use('/addTask', require('./routes/addTaskRoute'));
 
 // Protected functions
 app.use(jwt);
+app.use('/addTask', require('./routes/addTaskRoute'));
 app.use('/logOut', require('./routes/logOutRoute'));
 app.use('/getTasks', require('./routes/getTasksRoute'));
 

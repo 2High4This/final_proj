@@ -1,24 +1,26 @@
 import { Typography, AppBar, Toolbar, IconButton, Drawer, CssBaseline, Stack } from '@mui/material';
-// import { Box } from "@mui/system";
-import ListIcon from '@mui/icons-material/List';
 import CloseIcon from '@mui/icons-material/Close';
-import { useState, useEffect } from 'react';
+import ListIcon from '@mui/icons-material/List';
+import { useState } from 'react';
 
-import { styles, drawerWidth } from '../style';
-
+import useAuth from '../things_for_auth/useAuth';
+import { styles } from '../style';
 
 export function MyAppBar() {
 
+    const { auth } = useAuth(); // get current user
+    const loggedUser = auth.name;
+
     const [openDrawer, setOpenDrawer] = useState(false);
 
-    const toggleDrawer = ((change) => {
-        // if (openDrawer) {
-        //     styles.appbar.width = '100%';
-        // } else {
-        //     styles.appbar.width = `calc(100% - ${drawerWidth}px)`;
-        // }
-        setOpenDrawer(change);
-    });
+    // const toggleDrawer = ((change) => {
+    //     // if (openDrawer) {
+    //     //     styles.appbar.width = '100%';
+    //     // } else {
+    //     //     styles.appbar.width = `calc(100% - ${drawerWidth}px)`;
+    //     // }
+    //     setOpenDrawer(change);
+    // });
 
     return (
         <>
@@ -30,10 +32,20 @@ export function MyAppBar() {
                 color="primary"
             >
                 <Toolbar >
+                    {/* <Stack flexDirection='row' justifyContent='space-evenly'> */}
+
                     <Typography
-                        sx={styles.title}
+                        sx={{ flexGrow: `0.66` }}
+                        variant='h6'
                     >
                         Schedge To The Edge
+                    </Typography>
+
+                    <Typography
+                        sx={{ flexGrow: `1` }}
+                        variant='h6'
+                    >
+                        Hello {loggedUser}
                     </Typography>
 
                     <IconButton
@@ -41,6 +53,7 @@ export function MyAppBar() {
                     >
                         <ListIcon />
                     </IconButton>
+                    {/* </Stack> */}
                     <Stack flexDirection='column'>
                         <Drawer
                             sx={styles.drawer}
