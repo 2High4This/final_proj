@@ -5,27 +5,44 @@ const addTask = async (req, res) => {
 
     // gets usernames array, start day, length.
     const usernames = req.body.usernames;
-    console.log(usernames);
     const TaskName = req.body.title;
-
-    const startDate = req.body.start;
-    // const startDate = moment(req.body.start).add(2, 'h');
-    const endDate = moment(startDate).add(1, 'h');
+    var startDate = new Date(req.body.start);
+    const taskLength = req.body.lengthIn15;
+    var time = [];
 
     if (!usernames) {
         return res.status(400).json({ 'message': 'No usernames given.' });
     }
 
-    console.log("passed");
-    const searchEmptyTime = async (username, startDate) => {
+    for (let i = 0; i < usernames.length; i++) {
+        time = time.concat(await task.find({ Usernames: usernames[i] }));
+    }
+
+    const allUserTime = time;
+    const userTasks = allUserTime.map(p => p.endDate);
+
+
+    for (let i = 0; i < userTasks.length; i++) {
+        let date = new Date(userTasks[i]);
+        if (startDate < date) {
+            console.log("start", startDate);
+            console.log("current", date);
+            startDate = moment(startDate).add(15, 'm');
+            i--;
+        }
 
     }
+
+    const startTime = startDate;
+    const endTime = moment(startTime).add((15 * taskLength), 'm');
+
     const response = new task({
-        Usernames: [usernames[0]],
+        Usernames: usernames,
         TaskName,
-        startDate,
-        endDate
+        startDate: startTime,
+        endDate: endTime
     });
+
     await response.save();
     res.status(201).json({ 'success': `Task '${TaskName}' has created!` });
 
