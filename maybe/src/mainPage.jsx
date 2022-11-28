@@ -84,7 +84,7 @@ export function App() {
         });
 
         setAllTasks(newTask);
-        console.log("all", allTasks);
+        // console.log("all", allTasks);
       }
 
     } catch (err) {
@@ -95,6 +95,7 @@ export function App() {
 
 
   const handleNewTask = async () => {
+    const controller = new AbortController();
     //TODO: send form to server
 
     if (taskName.length === 0) {
@@ -119,8 +120,8 @@ export function App() {
         lengthIn15: lengthIn15
       })
     )
-
     handleReset();
+    getTasks(controller);
   }
 
   const handleReset = () => {
