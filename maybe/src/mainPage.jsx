@@ -241,7 +241,7 @@ export function App() {
             startAccessor="start"
             endAccessor="end"
             dayLayoutAlgorithm="no-overlap"
-            style={{ height: 500, margin: `50px` }}
+            style={{ maxHeight: 600, margin: `50px` }}
           />
         </> : <>
           <Stack flexDirection='column' margin='dense'>

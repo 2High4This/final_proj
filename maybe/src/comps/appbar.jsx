@@ -1,26 +1,34 @@
-import { Typography, AppBar, Toolbar, IconButton, Drawer, CssBaseline, Stack } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
-import ListIcon from '@mui/icons-material/List';
-import { useState } from 'react';
+import { Typography, AppBar, Toolbar, IconButton, MenuList, MenuItem, CssBaseline, Stack, Paper, ClickAwayListener, Menu } from '@mui/material';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import LogoutIcon from '@mui/icons-material/Logout';
+import { useLocation } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 
 import useAuth from '../things_for_auth/useAuth';
 import { styles } from '../style';
 
 export function MyAppBar() {
 
-    const { auth } = useAuth(); // get current user
-    const loggedUser = auth.name;
+    let location = useLocation();
+    const [anchorEl, setAnchorEl] = useState(null);
+    const open = Boolean(anchorEl);
 
-    const [openDrawer, setOpenDrawer] = useState(false);
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
 
-    // const toggleDrawer = ((change) => {
-    //     // if (openDrawer) {
-    //     //     styles.appbar.width = '100%';
-    //     // } else {
-    //     //     styles.appbar.width = `calc(100% - ${drawerWidth}px)`;
-    //     // }
-    //     setOpenDrawer(change);
-    // });
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+
+
+    // const { auth } = useAuth(); // get current user
+    // const loggedUser = auth.name;
+
+    // useEffect(() => {
+    //     { location === 'In' ? { flexGrow: `0.66` } : { flexGrow: `1` } }
+    //     console.log("changed");
+    // }, [location])
 
     return (
         <>
@@ -35,43 +43,43 @@ export function MyAppBar() {
                     {/* <Stack flexDirection='row' justifyContent='space-evenly'> */}
 
                     <Typography
-                        sx={{ flexGrow: `0.66` }}
+                        sx={styles.title}
                         variant='h6'
                     >
                         Schedge To The Edge
                     </Typography>
 
-                    <Typography
-                        sx={{ flexGrow: `1` }}
-                        variant='h6'
-                    >
-                        Hello {loggedUser}
-                    </Typography>
 
                     <IconButton
-                        onClick={() => setOpenDrawer(true)}
+                        id='open-button'
+                        onClick={handleClick}
+                        aria-controls={open ? 'basic-menu' : undefined}
+                        aria-expanded={open ? 'true' : undefined}
+                        aria-haspopup="true"
                     >
-                        <ListIcon />
+                        <AccountCircleIcon />
                     </IconButton>
-                    {/* </Stack> */}
-                    <Stack flexDirection='column'>
-                        <Drawer
-                            sx={styles.drawer}
-                            open={openDrawer}
-                            anchor='right'
-                        >
-                            <IconButton
-                                onClick={() => { setOpenDrawer(false) }}>
-                                <CloseIcon />
-                            </IconButton>
-                            <Typography paddingLeft={1}>
-                                Item one
-                            </Typography>
-                            <Typography paddingLeft={1}>
-                                Item two
-                            </Typography>
-                        </Drawer>
-                    </Stack>
+
+                    <Paper>
+                        <ClickAwayListener onClickAway={handleClose}>
+                            <Menu
+                                anchorEl={anchorEl}
+                                open={open}
+                                onClose={handleClose}
+                                MenuListProps={{
+                                    'aria-labelledby': 'open-button',
+                                }}>
+                                <MenuList
+                                    autoFocusItem={open}
+                                    aria-labelledby="composition-button"
+                                >
+                                    <MenuItem onClick={handleClose}>
+                                        LogOut <LogoutIcon />
+                                    </MenuItem>
+                                </MenuList>
+                            </Menu>
+                        </ClickAwayListener>
+                    </Paper>
                 </Toolbar>
             </AppBar>
 
