@@ -25,10 +25,15 @@ const addTask = async (req, res) => {
     for (let i = 0; i < userTasks.length; i++) {
         let date = new Date(userTasks[i]);
 
-        if (startDate.getHours > 23 && startDate.getHours < 6) {
-            startDate.setHours(6);
-            startDate.setMinutes(0);
-            startDate.setSeconds(0);
+        const endTime = moment(startDate).add((15 * taskLength), 'm');
+        const checkTotal = new Date(endTime);
+        console.log(i, checkTotal.getHours());
+
+        if (checkTotal.getHours() > 23 || checkTotal.getHours() < 6) {
+            startDate = moment(startDate).add(1, 'day');
+            startDate = new Date(startDate).setHours(6, 0, 0);
+            // startDate = startDate.setMinutes(0);
+            // startDate = startDate.setSeconds(0);
         }
         if (startDate < date) {
             startDate = moment(startDate).add(15, 'm');
