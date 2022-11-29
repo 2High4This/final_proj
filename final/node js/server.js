@@ -68,12 +68,3 @@ app.use('/getTasks', require('./routes/getTasksRoute'));
 
 
 connect();
-// const task = require('./taskSchema');
-// async function deletetask() {
-//     const toDelete = task.find({ TaskName: 'tester' });
-//     console.log(toDelete.TaskName);
-//     await task.deleteOne(toDelete);
-//     console.log("success");
-// }
-
-// deletetask();

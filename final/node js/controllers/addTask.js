@@ -32,8 +32,6 @@ const addTask = async (req, res) => {
         if (checkTotal.getHours() > 23 || checkTotal.getHours() < 6) {
             startDate = moment(startDate).add(1, 'day');
             startDate = new Date(startDate).setHours(6, 0, 0);
-            // startDate = startDate.setMinutes(0);
-            // startDate = startDate.setSeconds(0);
         }
         if (startDate < date) {
             startDate = moment(startDate).add(15, 'm');
