@@ -1,39 +1,62 @@
-import { Typography, AppBar, Toolbar, IconButton, MenuList, MenuItem, CssBaseline, Stack, Paper, ClickAwayListener, Menu } from '@mui/material';
+import { Typography, AppBar, Toolbar, IconButton, MenuItem, CssBaseline, Stack, Paper, ClickAwayListener, Menu, ListItem } from '@mui/material';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import LogoutIcon from '@mui/icons-material/Logout';
-import { useLocation } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 
 import useAuth from '../things_for_auth/useAuth';
+import useAxiosWithJWT from '../things_for_auth/useAxiosWithJWT';
 import { styles } from '../style';
 
 export function MyAppBar() {
 
-    let location = useLocation();
+    const [success, setSuccess] = useState(false);
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
 
+    const navigate = useNavigate();
+
+    const axiosWithJWT = useAxiosWithJWT();
+    const { auth } = useAuth();
+
+    useEffect(() => {
+
+        if (success) {
+
+            auth.name = "";
+            auth.accessToken = "";
+            navigate('/', { replace: true });
+        }
+
+    }, [success])
+
     const handleClick = (event) => {
+        setSuccess(false);
         setAnchorEl(event.currentTarget);
+        console.log(event.currentTarget);
     };
 
     const handleClose = () => {
         setAnchorEl(null);
     };
 
+    const handleLogout = async () => {
+        try {
+            await axiosWithJWT.post("/logOut",
+                JSON.stringify({ username: loggedUser })
+            );
+            setSuccess(true);
+        } catch (error) {
+            console.log(error?.response);
+        }
+        handleClose();
+    };
 
-    // const { auth } = useAuth(); // get current user
-    // const loggedUser = auth.name;
-
-    // useEffect(() => {
-    //     { location === 'In' ? { flexGrow: `0.66` } : { flexGrow: `1` } }
-    //     console.log("changed");
-    // }, [location])
+    const loggedUser = auth.name;
 
     return (
         <>
             <CssBaseline />
-
             <AppBar
                 sx={styles.appbar}
                 position="fixed"
@@ -50,39 +73,41 @@ export function MyAppBar() {
                     </Typography>
 
 
-                    <IconButton
-                        id='open-button'
-                        onClick={handleClick}
-                        aria-controls={open ? 'basic-menu' : undefined}
-                        aria-expanded={open ? 'true' : undefined}
-                        aria-haspopup="true"
-                    >
-                        <AccountCircleIcon />
-                    </IconButton>
+                    {loggedUser ?
+                        <>
+                            <IconButton
+                                id="basic-button"
+                                aria-controls={open ? 'basic-menu' : undefined}
+                                aria-haspopup="true"
+                                aria-expanded={open ? 'true' : undefined}
+                                onClick={handleClick}
+                            >
+                                <AccountCircleIcon />
+                            </IconButton>
 
-                    <Paper>
-                        <ClickAwayListener onClickAway={handleClose}>
                             <Menu
+                                id="basic-menu"
                                 anchorEl={anchorEl}
                                 open={open}
                                 onClose={handleClose}
                                 MenuListProps={{
-                                    'aria-labelledby': 'open-button',
-                                }}>
-                                <MenuList
-                                    autoFocusItem={open}
-                                    aria-labelledby="composition-button"
-                                >
-                                    <MenuItem onClick={handleClose}>
-                                        LogOut <LogoutIcon />
-                                    </MenuItem>
-                                </MenuList>
+                                    'aria-labelledby': 'basic-button',
+                                }}
+                            >
+                                <MenuItem>
+                                    Hello {loggedUser}
+                                </MenuItem>
+                                <hr />
+                                <MenuItem onClick={handleLogout}>
+                                    LogOut
+                                    <LogoutIcon />
+                                </MenuItem>
                             </Menu>
-                        </ClickAwayListener>
-                    </Paper>
+
+                        </> : []
+                    }
                 </Toolbar>
             </AppBar>
-
             <Toolbar />
         </>
     );

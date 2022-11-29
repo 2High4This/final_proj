@@ -1,4 +1,4 @@
-import { Typography, Button, TextField, DialogTitle, DialogContent, DialogActions, Dialog, Stack } from '@mui/material';
+import { Typography, Button, TextField, Stack } from '@mui/material';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { DatePicker } from '@mui/x-date-pickers';
@@ -8,7 +8,6 @@ import AddIcon from '@mui/icons-material/Add';
 import useAxiosWithJWT from './things_for_auth/useAxiosWithJWT';
 import useAuth from './things_for_auth/useAuth';
 import { useEffect, useState } from 'react';
-import { MyAppBar } from './comps/appbar';
 import { styles } from './style';
 import moment from 'moment';
 
@@ -135,7 +134,6 @@ export function App() {
     <>
       {loggedUser ?
         <>
-          <MyAppBar />
 
           <Typography
             textAlign={"center"}
@@ -194,41 +192,6 @@ export function App() {
               }}
             />
 
-            {/* <Dialog open={openDialog} >
-
-<DialogTitle>Add Task</DialogTitle>
-
-          <DialogContent>
-          
-          <Stack spacing={2} justifyContent='space-evenly' alignItems={'stretch'} mt={2}>
-          <TextField
-          autoFocus
-          margin='dense'
-          id="name"
-          label="Task Name"
-          type='text'
-          variant='outlined'
-          />
-          <TextField
-          margin='dense'
-          id="lengthInHours"
-          label="Length (in hours)"
-          type='number'
-          variant='outlined'
-          />
-          </Stack>
-          
-          </DialogContent>
-          
-          <DialogActions>
-
-          <Button onClick={() => { setOpenDialog(false) }}>Cancel</Button>
-          <Button onClick={() => { handleNewTask() }}>Add</Button>
-          
-          </DialogActions>
-          
-        </Dialog> */}
-
             <Button variant='contained' endIcon={<AddIcon />} onClick={() => { handleNewTask() }}>
               Add Task
             </Button>
@@ -241,7 +204,7 @@ export function App() {
             startAccessor="start"
             endAccessor="end"
             dayLayoutAlgorithm="no-overlap"
-            style={{ maxHeight: 600, margin: `50px` }}
+            style={{ height: `500px`, margin: `50px` }}
           />
         </> : <>
           <Stack flexDirection='column' margin='dense'>

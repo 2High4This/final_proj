@@ -24,9 +24,13 @@ const addTask = async (req, res) => {
 
     for (let i = 0; i < userTasks.length; i++) {
         let date = new Date(userTasks[i]);
+
+        if (startDate.getHours > 23 && startDate.getHours < 6) {
+            startDate.setHours(6);
+            startDate.setMinutes(0);
+            startDate.setSeconds(0);
+        }
         if (startDate < date) {
-            console.log("start", startDate);
-            console.log("current", date);
             startDate = moment(startDate).add(15, 'm');
             i--;
         }

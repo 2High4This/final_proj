@@ -2,7 +2,8 @@ const User = require('../userSchema');
 const bcrypt = require('bcrypt');
 
 const addUser = async (req, res) => {
-    const { username, password } = req.body;
+    const username = req.body.username;
+    const password = req.body.password;
     if (!username || !password) return res.status(400).json({ 'message': 'Username and password are required.' });
 
     // check for duplicate usernames in mongo
@@ -18,7 +19,7 @@ const addUser = async (req, res) => {
             "username": username,
             "password": hashedPass
         });
-        
+
         await result.save()
 
         res.status(201).json({ 'success': `User ${username} created!` });

@@ -6,14 +6,11 @@ import LoginIcon from '@mui/icons-material/Login';
 
 import useAxiosWithJWT from './things_for_auth/useAxiosWithJWT';
 import useAuth from './things_for_auth/useAuth';
-import { MyAppBar } from './comps/appbar';
 import { styles } from './style';
 import axios from './api/axios';
 
 
 export function LISU() {
-
-    const { setAuth } = useAuth();
 
     const [success, setSuccess] = useState(false);
     const [signUp, setSignUp] = useState(false);
@@ -25,7 +22,12 @@ export function LISU() {
 
     const navigate = useNavigate();
 
+    const { setAuth } = useAuth();
     const axiosWithJWT = useAxiosWithJWT();
+
+    useEffect(() => {
+        setAuth({ name: '', accessToken: '' });
+    }, []);
 
     useEffect(() => {
 
@@ -132,7 +134,6 @@ export function LISU() {
 
     return (
         <>
-            <MyAppBar />
             <form onSubmit={handleSubmit}>
                 <Box sx={styles.loginBox}>
                     <Typography

@@ -6,12 +6,14 @@ import React from 'react';
 
 import { AuthProvider } from './things_for_auth/keepAuth';
 import { MyRoutes } from './routes';
+import { MyAppBar } from './comps/appbar';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <LocalizationProvider dateAdapter={AdapterMoment}>
       <AuthProvider>
         <BrowserRouter>
+          <MyAppBar />
           <MyRoutes />
         </BrowserRouter>
       </AuthProvider>
