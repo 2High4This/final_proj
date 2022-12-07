@@ -109,9 +109,7 @@ export function App() {
       })
     );
     handleReset();
-    useMemo(() => {
-      getTasks();
-    });
+    getTasks();
   };
 
   const handleReset = () => {
@@ -126,7 +124,6 @@ export function App() {
   };
 
   const handleDelete = async () => {
-    console.log(selectedTask.id);
     await axiosWithJWT.post(
       "/deleteTask",
       JSON.stringify({
