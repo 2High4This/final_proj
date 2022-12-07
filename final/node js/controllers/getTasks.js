@@ -1,7 +1,6 @@
 const tasks = require('../taskSchema');
 
 const getTasks = async (req, res) => {
-    console.log("passed");
     const userName = req.query.requestedName;
 
     if (!userName) {
