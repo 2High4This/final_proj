@@ -1,16 +1,15 @@
-const tasks = require('../taskSchema');
+const tasks = require("../taskSchema");
 
 const getTasks = async (req, res) => {
-    const userName = req.query.requestedName;
+  const userName = req.query.requestedName;
 
-    if (!userName) {
-        return res.status(400).json({ 'message': 'Username is missing.' });
-    }
+  if (!userName) {
+    return res.status(400).json({ message: "Username is missing." });
+  }
 
-    const getUserTasks = await tasks.find({ Usernames: userName }).exec();
+  const getUserTasks = await tasks.find({ Usernames: userName }).exec();
 
-    res.json(getUserTasks);
-
+  res.json(getUserTasks);
 };
 
 module.exports = { getTasks };
