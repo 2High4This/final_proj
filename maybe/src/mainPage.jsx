@@ -32,7 +32,6 @@ export function App() {
   const [allTasks, setAllTasks] = useState([]);
   const [errorMsg, setErrormsg] = useState("");
 
-  const newTask = [];
   const controller = new AbortController();
 
   const navigate = useNavigate();
@@ -47,13 +46,7 @@ export function App() {
   const localizer = momentLocalizer(moment);
 
   useEffect(() => {
-    let isMounted = true;
-
     getTasks();
-    return () => {
-      isMounted = false;
-      controller.abort();
-    };
   }, []);
 
   const getTasks = async () => {
@@ -62,31 +55,27 @@ export function App() {
         params: {
           requestedName: loggedUser,
         },
-        signal: controller.signal,
       });
 
       if (!response.data) {
         return;
       } else {
-        response.data.map((p) => {
-          const task = {
+        const data = response.data.map((p) => {
+          return {
             id: p._id,
             title: p.TaskName,
             start: new Date(p.startDate),
             end: new Date(p.endDate),
           };
-
-          newTask.push(task);
         });
-
-        setAllTasks(newTask);
-        // console.log("all", allTasks);
+        setAllTasks(data);
       }
     } catch (err) {
       console.error(err);
     }
   };
 
+  console.log(allTasks);
   const handleNewTask = async () => {
     //TODO: send form to server
 
