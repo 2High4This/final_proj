@@ -75,10 +75,7 @@ export function App() {
     }
   };
 
-  console.log(allTasks);
   const handleNewTask = async () => {
-    //TODO: send form to server
-
     if (taskName.length === 0) {
       return setErrormsg("Task must have a name.");
     } else if (taskLength <= 0) {
