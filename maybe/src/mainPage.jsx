@@ -220,7 +220,7 @@ export function App() {
                 onClick={handleDelete}
                 variant="contained"
                 sx={{ backgroundColor: `red` }}>
-                Agree
+                Delete
               </Button>
             </DialogActions>
           </Dialog>
