@@ -31,6 +31,7 @@ export function App() {
   const [taskName, setTaskName] = useState("");
   const [allTasks, setAllTasks] = useState([]);
   const [errorMsg, setErrormsg] = useState("");
+  const [openNewTask, setOpenNewTask] = useState(false);
 
   const controller = new AbortController();
 
@@ -88,7 +89,7 @@ export function App() {
     await axiosWithJWT.post(
       "/addTask",
       JSON.stringify({
-        usernames: [loggedUser, taskUsers],
+        usernames: [loggedUser, ...taskUsers.split(" ")],
         title: taskName,
         start: startValue,
         lengthIn15: lengthIn15,
@@ -105,10 +106,6 @@ export function App() {
     setStartValue(new Date());
   };
 
-  const handleClose = () => {
-    setOpenDialog(false);
-  };
-
   const handleDelete = async () => {
     await axiosWithJWT.post(
       "/deleteTask",
@@ -117,7 +114,7 @@ export function App() {
       })
     );
     getTasks();
-    handleClose();
+    setOpenDialog(false);
   };
 
   const handleEventSelect = (event) => {
@@ -129,97 +126,79 @@ export function App() {
     <>
       {loggedUser ? (
         <>
-          <Typography
-            textAlign={"center"}
-            sx={errorMsg ? styles.errorMsg : styles.offscreen}>
-            {errorMsg}
-          </Typography>
-
-          <Stack
-            margin="dense"
-            mt={2}
-            flexDirection={"row"}
-            sx={styles.rootBox}
-            justifyContent="space-evenly">
-            <TextField
-              name="users"
-              value={taskUsers}
-              label="Any other users?"
-              type="text"
-              variant="outlined"
-              onChange={(e) => {
-                setTaskUsers(e.target.value);
-                setErrormsg("");
-              }}
-            />
-
-            <TextField
-              name="name"
-              value={taskName}
-              label="Task Name"
-              type="text"
-              variant="outlined"
-              onChange={(e) => {
-                setTaskName(e.target.value);
-                setErrormsg("");
-              }}
-            />
-
-            <DatePicker
-              label="start"
-              value={startValue}
-              onChange={(newValue) => {
-                setStartValue(newValue);
-              }}
-              renderInput={(params) => <TextField {...params} />}
-            />
-
-            <TextField
-              name="length"
-              InputProps={{
-                inputProps: { min: 0 },
-              }}
-              value={taskLength}
-              label="Length (in hours)"
-              type="number"
-              variant="outlined"
-              onChange={(e) => {
-                setTaskLength(e.target.value);
-                setErrormsg("");
-              }}
-            />
-
-            <Button
-              variant="contained"
-              endIcon={<AddIcon />}
-              onClick={() => {
-                handleNewTask();
-              }}>
-              Add Task
-            </Button>
-          </Stack>
-
           <Dialog
-            open={openDialog}
-            // onClose={handleClose}
-            aria-labelledby="alert-dialog-title"
-            aria-describedby="alert-dialog-description">
-            <DialogTitle id="alert-dialog-title">delete task?</DialogTitle>
-            <DialogContent>
-              <DialogContentText id="alert-dialog-description">
-                By pressing Delete you will delete the selected task, this
-                action cannot be reversed. Press Cancel to cancel deletion.
-              </DialogContentText>
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={handleClose}>Cancel</Button>
-              <Button
-                onClick={handleDelete}
-                variant="contained"
-                sx={{ backgroundColor: `red` }}>
-                Delete
-              </Button>
-            </DialogActions>
+            open={openNewTask}
+            aria-labelledby="task-dialog-title"
+            sx={{ bgcolor: "text.secondary" }}>
+            <DialogTitle id="task-dialog-title">New Task</DialogTitle>
+
+            <Stack
+              margin="dense"
+              marginX={2}
+              spacing={3}
+              justifyContent="space-around">
+              <Typography
+                textAlign={"center"}
+                sx={errorMsg ? styles.errorMsg : styles.offscreen}>
+                {errorMsg}
+              </Typography>
+              <TextField
+                name="users"
+                value={taskUsers}
+                label="Any other users? (separate by space)"
+                type="text"
+                variant="outlined"
+                onChange={(e) => {
+                  setTaskUsers(e.target.value);
+                  setErrormsg("");
+                }}
+              />
+
+              <TextField
+                name="name"
+                value={taskName}
+                label="Task Name"
+                type="text"
+                variant="outlined"
+                onChange={(e) => {
+                  setTaskName(e.target.value);
+                  setErrormsg("");
+                }}
+              />
+
+              <DatePicker
+                label="start"
+                value={startValue}
+                onChange={(newValue) => {
+                  setStartValue(newValue);
+                }}
+                renderInput={(params) => <TextField {...params} />}
+              />
+
+              <TextField
+                name="length"
+                InputProps={{
+                  inputProps: { min: 0 },
+                }}
+                value={taskLength}
+                label="Length (in hours)"
+                type="number"
+                variant="outlined"
+                onChange={(e) => {
+                  setTaskLength(e.target.value);
+                  setErrormsg("");
+                }}
+              />
+              <DialogActions>
+                <Button onClick={() => setOpenNewTask(false)}>Cancel</Button>
+
+                <Button
+                  onClick={handleNewTask}
+                  variant="contained">
+                  Add Task
+                </Button>
+              </DialogActions>
+            </Stack>
           </Dialog>
 
           <Calendar
@@ -229,8 +208,46 @@ export function App() {
             startAccessor="start"
             endAccessor="end"
             dayLayoutAlgorithm="no-overlap"
-            style={{ height: `500px`, margin: `50px` }}
+            style={{
+              height: `500px`,
+              marginTop: `50px`,
+              marginLeft: "2rem",
+              marginRight: "2rem",
+            }}
           />
+
+          <Button
+            variant="contained"
+            endIcon={<AddIcon />}
+            onClick={() => setOpenNewTask(true)}
+            sx={{ float: "right", marginRight: "2rem" }}>
+            Add Task
+          </Button>
+
+          <Dialog
+            open={openDialog}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description">
+            <DialogTitle id="alert-dialog-title">delete task?</DialogTitle>
+
+            <DialogContent>
+              <DialogContentText id="alert-dialog-description">
+                By pressing Delete you will delete the selected task, this
+                action cannot be reversed. Press Cancel to cancel deletion.
+              </DialogContentText>
+            </DialogContent>
+
+            <DialogActions>
+              <Button onClick={() => setOpenDialog(false)}>Cancel</Button>
+
+              <Button
+                onClick={handleDelete}
+                variant="contained"
+                sx={{ backgroundColor: `red` }}>
+                Delete
+              </Button>
+            </DialogActions>
+          </Dialog>
         </>
       ) : (
         <>
@@ -243,7 +260,7 @@ export function App() {
               textAlign="center"
               marginTop={`10%`}>
               {" "}
-              username is undefined, go back to loading screen
+              user is undefined, go back to loading screen
             </Typography>
             <br />
             <Button

@@ -1,11 +1,10 @@
-import { blue } from '@mui/material/colors';
+import { blue } from "@mui/material/colors";
 
 const buttonBlue = blue[500];
 const drawerWidth = 240;
 const styles = {
-
   offscreen: {
-    display: `none`
+    display: `none`,
   },
 
   errorMsg: {
@@ -14,7 +13,7 @@ const styles = {
     fontWeight: `bold`,
     padding: `0.5rem`,
     marginBottom: `0.5rem`,
-    width: `100%`
+    width: `100%`,
   },
 
   appbar: { width: `100%` },
@@ -38,13 +37,13 @@ const styles = {
     borderRadius: `5px`,
     boxShadow: `5px 5px 10px #ccc`,
     ":hover": {
-      boxShadow: `10px 10px 20px #ccc`
-    }
+      boxShadow: `10px 10px 20px #ccc`,
+    },
   },
 
   loginTitle: {
     padding: `5px`,
-    textAlign: `center`
+    textAlign: `center`,
   },
 
   loginButton: {
@@ -54,16 +53,13 @@ const styles = {
   },
 
   drawer: {
-
     width: drawerWidth,
 
     "& .MuiDrawer-paper": {
       width: drawerWidth,
       boxSizing: `border-box`,
-    }
-
+    },
   },
-
 };
 
 export { styles, drawerWidth };
