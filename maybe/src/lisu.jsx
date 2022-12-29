@@ -89,6 +89,7 @@ export function LISU() {
         );
 
         const accessToken = response?.data?.accessToken;
+        sessionStorage.setItem("name", name);
         setAuth({ name: name, accessToken: accessToken });
         setSuccess(true);
       }
