@@ -124,7 +124,7 @@ export function App() {
 
   return (
     <>
-      {loggedUser ? (
+      {sessionStorage.getItem("name") ? (
         <>
           <Dialog
             open={openNewTask}
