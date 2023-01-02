@@ -186,6 +186,7 @@ export function App() {
                 label="Length (in hours)"
                 type="number"
                 variant="outlined"
+                disabled={allDay}
                 onChange={(e) => {
                   setTaskLength(e.target.value);
                   setErrormsg("");

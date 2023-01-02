@@ -5,14 +5,11 @@ import {
   IconButton,
   MenuItem,
   CssBaseline,
-  Stack,
-  Paper,
-  ClickAwayListener,
   Menu,
-  ListItem,
 } from "@mui/material";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import LogoutIcon from "@mui/icons-material/Logout";
+import DarkModeIcon from "@mui/icons-material/DarkMode";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 
@@ -22,6 +19,7 @@ import { styles } from "../style";
 
 export function MyAppBar() {
   const [success, setSuccess] = useState(false);
+  const [dark, setDark] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
 
@@ -29,6 +27,8 @@ export function MyAppBar() {
 
   const axiosWithJWT = useAxiosWithJWT();
   const { auth } = useAuth();
+
+  const loggedUser = sessionStorage.getItem("name");
 
   useEffect(() => {
     if (success) {
@@ -62,7 +62,10 @@ export function MyAppBar() {
     handleClose();
   };
 
-  const loggedUser = sessionStorage.getItem("name");
+  const toggleDarkMode = () => {
+    setDark(!dark);
+    sessionStorage.setItem("darkMode", !dark);
+  };
 
   return (
     <>
@@ -77,6 +80,9 @@ export function MyAppBar() {
             variant="h6">
             Schedge To The Edge
           </Typography>
+          <IconButton onClick={toggleDarkMode}>
+            <DarkModeIcon />
+          </IconButton>
 
           {loggedUser ? (
             <>
