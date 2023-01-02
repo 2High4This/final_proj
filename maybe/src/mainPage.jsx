@@ -8,6 +8,8 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
+  Checkbox,
+  FormControlLabel,
 } from "@mui/material";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
@@ -16,7 +18,6 @@ import { useNavigate } from "react-router-dom";
 import AddIcon from "@mui/icons-material/Add";
 
 import useAxiosWithJWT from "./things_for_auth/useAxiosWithJWT";
-import useAuth from "./things_for_auth/useAuth";
 import { useEffect, useState } from "react";
 import { styles } from "./style";
 import moment from "moment";
@@ -29,18 +30,16 @@ export function App() {
   const [taskLength, setTaskLength] = useState(0);
   const [taskUsers, setTaskUsers] = useState("");
   const [taskName, setTaskName] = useState("");
+  const [allDay, setAllDay] = useState(false);
   const [allTasks, setAllTasks] = useState([]);
   const [errorMsg, setErrormsg] = useState("");
   const [openNewTask, setOpenNewTask] = useState(false);
-
-  const controller = new AbortController();
 
   const navigate = useNavigate();
 
   //custom hook usages
   const axiosWithJWT = useAxiosWithJWT(); // get request hook
-  const { auth } = useAuth(); // get current user
-  const loggedUser = auth.name; //Current username for taking tasks from db
+  const loggedUser = sessionStorage.getItem("name"); //Current username for taking tasks from db
 
   //date localizer for calendar
   moment.locale("en-il");
@@ -67,6 +66,7 @@ export function App() {
             title: p.TaskName,
             start: new Date(p.startDate),
             end: new Date(p.endDate),
+            allDay,
           };
         });
         setAllTasks(data);
@@ -79,20 +79,23 @@ export function App() {
   const handleNewTask = async () => {
     if (taskName.length === 0) {
       return setErrormsg("Task must have a name.");
-    } else if (taskLength <= 0) {
+    } else if (!allDay && taskLength <= 0) {
       setTaskLength(0);
-      return setErrormsg("Length must be bigger than 0.");
+      return setErrormsg("Task must have a length.");
     }
-
+    var l;
     const lengthIn15 = taskLength * 4;
+    const moreUsers = taskUsers.split(" ");
+    moreUsers == "" ? (l = [loggedUser]) : (l = [loggedUser, ...moreUsers]);
 
     await axiosWithJWT.post(
       "/addTask",
       JSON.stringify({
-        usernames: [loggedUser, ...taskUsers.split(" ")],
+        usernames: l,
         title: taskName,
         start: startValue,
         lengthIn15: lengthIn15,
+        allDay,
       })
     );
     handleReset();
@@ -104,6 +107,8 @@ export function App() {
     setTaskUsers("");
     setTaskLength(0);
     setStartValue(new Date());
+    setAllDay(false);
+    setOpenNewTask(false);
   };
 
   const handleDelete = async () => {
@@ -124,13 +129,13 @@ export function App() {
 
   return (
     <>
-      {sessionStorage.getItem("name") ? (
+      {loggedUser ? (
         <>
           <Dialog
             open={openNewTask}
             aria-labelledby="task-dialog-title"
             sx={{ bgcolor: "text.secondary" }}>
-            <DialogTitle id="task-dialog-title">New Task</DialogTitle>
+            <DialogTitle id="task-dialog-title"> New Task </DialogTitle>
 
             <Stack
               margin="dense"
@@ -153,7 +158,6 @@ export function App() {
                   setErrormsg("");
                 }}
               />
-
               <TextField
                 name="name"
                 value={taskName}
@@ -165,7 +169,6 @@ export function App() {
                   setErrormsg("");
                 }}
               />
-
               <DatePicker
                 label="start"
                 value={startValue}
@@ -174,7 +177,6 @@ export function App() {
                 }}
                 renderInput={(params) => <TextField {...params} />}
               />
-
               <TextField
                 name="length"
                 InputProps={{
@@ -188,6 +190,19 @@ export function App() {
                   setTaskLength(e.target.value);
                   setErrormsg("");
                 }}
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={allDay}
+                    onChange={() => {
+                      setAllDay(!allDay);
+                      setErrormsg("");
+                    }}
+                    inputProps={{ "aria-label": "controlled" }}
+                  />
+                }
+                label="All Day?"
               />
               <DialogActions>
                 <Button onClick={() => setOpenNewTask(false)}>Cancel</Button>

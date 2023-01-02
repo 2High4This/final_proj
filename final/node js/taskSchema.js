@@ -20,6 +20,11 @@ const tasksSchema = new Schema({
     type: Date,
     required: true,
   },
+
+  allDay: {
+    type: Boolean,
+    required: true,
+  },
 });
 
 module.exports = mongoose.model("tasks", tasksSchema);

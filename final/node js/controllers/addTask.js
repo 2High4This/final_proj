@@ -5,8 +5,10 @@ const addTask = async (req, res) => {
   // gets usernames array, start day, length.
   const usernames = req.body.usernames;
   const TaskName = req.body.title;
-  var startDate = new Date(req.body.start);
   const taskLength = req.body.lengthIn15;
+  const allDay = req.body.allDay;
+
+  var startDate = new Date(req.body.start);
   var time = [];
 
   if (!usernames) {
@@ -16,34 +18,39 @@ const addTask = async (req, res) => {
   for (let i = 0; i < usernames.length; i++) {
     time = time.concat(await task.find({ Usernames: usernames[i] }));
   }
+  for (let i = 0; i < time.length; i++) {
+    const date = new Date(time[i].endDate);
 
-  const allUserTime = time;
-  const userTasks = allUserTime.map((p) => p.endDate);
+    const newTaskEndDate = new Date(
+      moment(startDate).add(15 * taskLength, "m")
+    );
 
-  for (let i = 0; i < userTasks.length; i++) {
-    let date = new Date(userTasks[i]);
-
-    const endTime = moment(startDate).add(15 * taskLength, "m");
-    const checkTotal = new Date(endTime);
-
-    if (checkTotal.getHours() > 23 || checkTotal.getHours() < 6) {
-      startDate = moment(startDate).add(1, "day");
-      startDate = new Date(startDate).setHours(6, 0, 0);
-    }
-    if (startDate < date) {
-      startDate = moment(startDate).add(15, "m");
-      i--;
+    if (allDay) {
+      if (moment(newTaskEndDate).dayOfYear() === moment(date).dayOfYear()) {
+        startDate = new Date(moment(startDate).add(1, "day"));
+        i = 0;
+      }
+    } else {
+      if (newTaskEndDate.getHours() >= 23 || newTaskEndDate.getHours() <= 6) {
+        startDate = moment(startDate).add(1, "day");
+        startDate = new Date(startDate).setHours(6, 0, 0);
+      }
+      if (newTaskEndDate < date) {
+        startDate = moment(startDate).add(15, "m");
+        i = 0;
+      }
     }
   }
 
-  const startTime = startDate;
-  const endTime = moment(startTime).add(15 * taskLength, "m");
+  const startTime = new Date(startDate);
+  const newTaskEndDate = moment(startTime).add(15 * taskLength, "m");
 
   const response = new task({
     Usernames: usernames,
     TaskName,
     startDate: startTime,
-    endDate: endTime,
+    endDate: newTaskEndDate,
+    allDay,
   });
 
   await response.save();
